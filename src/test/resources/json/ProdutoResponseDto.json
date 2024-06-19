@@ -1,0 +1,16 @@
+[
+  {
+    "codigo": 1,
+    "tipo_vinho": "tipo vinho 1",
+    "preco": 229.99,
+    "safra": "2017",
+    "ano_compra": 2018
+  },
+  {
+    "codigo": 2,
+    "tipo_vinho": "tipo vinho 2",
+    "preco": 126.5,
+    "safra": "2018",
+    "ano_compra": 2019
+  }
+]

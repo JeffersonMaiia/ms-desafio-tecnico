@@ -1,0 +1,30 @@
+[
+  {
+    "nome": "XTPO CLIENTE 1",
+    "cpf": "12345678901",
+    "compras": [
+      {
+        "codigo": "1",
+        "quantidade": 6
+      },
+      {
+        "codigo": "2",
+        "quantidade": 5
+      }
+    ]
+  },
+  {
+    "nome": "XTPO CLIENTE 2",
+    "cpf": "12345678902",
+    "compras": [
+      {
+        "codigo": "1",
+        "quantidade": 2
+      },
+      {
+        "codigo": "2",
+        "quantidade": 1
+      }
+    ]
+  }
+]

@@ -54,8 +54,9 @@ class ComprasServiceTest {
 
         var resumoCompras = comprasService.findAllCompras();
 
-        assertThat(resumoCompras).isNotEmpty();
-        assertThat(resumoCompras).hasSize(2);
+        assertThat(resumoCompras)
+                .isNotEmpty()
+                .hasSize(2);
     }
 
     @Test
@@ -72,6 +73,22 @@ class ComprasServiceTest {
     }
 
     @Test
+    @DisplayName("Método: findMaiorCompra - Deve retornar NoContentException quando não encontrar a maior compra realizada no ano")
+    void deveRetornarNoContentExceptionQuandoNaoEncontrarMaiorCompraRealizadaNoAno() throws Exception {
+        when(clienteClient.getClientes())
+                .thenReturn(MockObject.getListFromFile("json/ClienteResponseDto.json", ClienteResponseDto.class));
+        when(produtoClient.getProdutos())
+                .thenReturn(MockObject.getListFromFile("json/ProdutoResponseDto.json", ProdutoResponseDto.class));
+
+        Throwable throwable = catchThrowable(() -> comprasService.findMaiorCompra(2021));
+
+        assertThat(throwable)
+                .isNotNull()
+                .hasMessage("Não foi possível encontrar a maior compra realizada no ano de 2021.")
+                .isExactlyInstanceOf(NoContentException.class);
+    }
+
+    @Test
     @DisplayName("Método: findMaiorCompra - Deve retornar ResumoComprasClientResponseDto")
     void deveRetornarResumoComprasClientResponseDto() throws Exception {
         when(clienteClient.getClientes())
@@ -82,8 +99,9 @@ class ComprasServiceTest {
         var resumoCompras = comprasService.findMaiorCompra(2019);
 
         assertThat(resumoCompras).isNotNull();
-        assertThat(resumoCompras.getValorTotalCompras()).isNotNull();
-        assertThat(resumoCompras.getValorTotalCompras()).isEqualTo(new BigDecimal("632.50"));
+        assertThat(resumoCompras.getValorTotalCompras())
+                .isNotNull()
+                .isEqualTo(new BigDecimal("632.50"));
     }
 
 }

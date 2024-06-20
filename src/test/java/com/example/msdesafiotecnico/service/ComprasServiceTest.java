@@ -132,4 +132,32 @@ class ComprasServiceTest {
                 .hasSize(2);
     }
 
+    @Test
+    @DisplayName("Método: recomendacaoProdutos - Deve retornar NoContentException quando não encontrar clientes ou produtos ")
+    void deveRetornarNoContentExceptionQuandoNaoEncontrarClientesOuProdutosRecomendacaoProdutos() {
+        when(clienteClient.getClientes()).thenReturn(null);
+
+        Throwable throwable = catchThrowable(() -> comprasService.recomendacaoProdutos());
+
+        assertThat(throwable)
+                .isNotNull()
+                .hasMessage("Não foi possível encontrar clientes e produtos.")
+                .isExactlyInstanceOf(NoContentException.class);
+    }
+
+    @Test
+    @DisplayName("Método: recomendacaoProdutos - Deve retornar lista de RecomendacaoProdutoResponseDto")
+    void deveRetornarListaDeRecomendacaoProdutoResponseDto() throws Exception {
+        when(clienteClient.getClientes())
+                .thenReturn(MockObject.getListFromFile("json/ClienteResponseDto.json", ClienteResponseDto.class));
+        when(produtoClient.getProdutos())
+                .thenReturn(MockObject.getListFromFile("json/ProdutoResponseDto.json", ProdutoResponseDto.class));
+
+        var recomendacaoProdutos = comprasService.recomendacaoProdutos();
+
+        assertThat(recomendacaoProdutos)
+                .isNotEmpty()
+                .hasSize(2);
+    }
+
 }

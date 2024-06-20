@@ -56,9 +56,8 @@ public class ComprasService {
                 .sorted(Comparator.comparing(ResumoComprasClientResponseDto::getValorTotalCompras).reversed())
                 .filter(resumo -> resumo.getValorTotalCompras().compareTo(BigDecimal.ZERO) > 0)
                 .findFirst()
-                .orElseThrow(() -> new NoContentException("""
-                        Não foi possível encontrar a maior compra realizada no ano de %d.
-                        """.formatted(anoCompra)));
+                .orElseThrow(() -> new NoContentException("Não foi possível encontrar a maior compra realizada no ano de %d."
+                        .formatted(anoCompra)));
     }
 
     private static ResumoComprasClientResponseDto getResumoQtdTotalCompras(ResumoComprasClientResponseDto resumo1, ResumoComprasClientResponseDto resumo2) {

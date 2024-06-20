@@ -104,4 +104,32 @@ class ComprasServiceTest {
                 .isEqualTo(new BigDecimal("632.50"));
     }
 
+    @Test
+    @DisplayName("Método: findClientesFieis - Deve retornar NoContentException quando não encontrar clientes ou produtos ")
+    void deveRetornarNoContentExceptionQuandoNaoEncontrarClientesOuProdutosFindClientesFieis() {
+        when(clienteClient.getClientes()).thenReturn(null);
+
+        Throwable throwable = catchThrowable(() -> comprasService.findClientesFieis());
+
+        assertThat(throwable)
+                .isNotNull()
+                .hasMessage("Não foi possível encontrar clientes e produtos.")
+                .isExactlyInstanceOf(NoContentException.class);
+    }
+
+    @Test
+    @DisplayName("Método: findClientesFieis - Deve retornar lista dos top 3 clientes mais fieis")
+    void deveRetornarListaOs3ClientesMaisFieis() throws Exception {
+        when(clienteClient.getClientes())
+                .thenReturn(MockObject.getListFromFile("json/ClienteResponseDto.json", ClienteResponseDto.class));
+        when(produtoClient.getProdutos())
+                .thenReturn(MockObject.getListFromFile("json/ProdutoResponseDto.json", ProdutoResponseDto.class));
+
+        var resumoCompras = comprasService.findClientesFieis();
+
+        assertThat(resumoCompras)
+                .isNotEmpty()
+                .hasSize(2);
+    }
+
 }

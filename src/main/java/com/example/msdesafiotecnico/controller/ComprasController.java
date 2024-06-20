@@ -1,5 +1,6 @@
 package com.example.msdesafiotecnico.controller;
 
+import com.example.msdesafiotecnico.controller.api.ComprasControllerApi;
 import com.example.msdesafiotecnico.dto.RecomendacaoProdutoResponseDto;
 import com.example.msdesafiotecnico.dto.ResumoComprasClientResponseDto;
 import com.example.msdesafiotecnico.service.ComprasService;
@@ -15,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("v1")
-public class ComprasController {
+public class ComprasController implements ComprasControllerApi {
 
     private final ComprasService comprasService;
 

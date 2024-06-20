@@ -4,3 +4,7 @@ spring:
 
 external-ms:
   url: "https://rgr3viiqdl8sikgv.public.blob.vercel-storage.com"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

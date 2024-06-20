@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: ms-desafio-tecnico
+
+external-ms:
+  url: "http://localhost:8099"

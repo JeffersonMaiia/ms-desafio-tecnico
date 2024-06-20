@@ -15,4 +15,11 @@ public class GlobalControllerExceptionHandler {
     public void handleNoContentException(NoContentException ex) {
         log.warn("Response status NO_CONTENT, motivo: {}",ex.getMessage());
     }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IntegrationServiceRestException.class)
+    public String handleIntegrationServiceRestException(IntegrationServiceRestException ex) {
+        log.error(ex.getMessage());
+        return ex.getMessage();
+    }
 }

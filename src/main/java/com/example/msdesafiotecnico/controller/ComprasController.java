@@ -1,5 +1,6 @@
 package com.example.msdesafiotecnico.controller;
 
+import com.example.msdesafiotecnico.dto.RecomendacaoProdutoResponseDto;
 import com.example.msdesafiotecnico.dto.ResumoComprasClientResponseDto;
 import com.example.msdesafiotecnico.service.ComprasService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,11 @@ public class ComprasController {
     @GetMapping("/clientes_fieis")
     public ResponseEntity<List<ResumoComprasClientResponseDto>> findClientesFieis() {
         return ResponseEntity.ok(comprasService.findClientesFieis());
+    }
+
+    @GetMapping("/recomendacao/cliente/tipo")
+    public ResponseEntity<List<RecomendacaoProdutoResponseDto>> recomendacaoProdutos() {
+        return ResponseEntity.ok(comprasService.recomendacaoProdutos());
     }
 
 }

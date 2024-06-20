@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
@@ -28,7 +29,7 @@ public class ComprasService {
 
         return clientes.stream()
                 .map(cliente -> cliente.getCompras().stream()
-                        .map(compra -> getResumoCompras(cliente, compra, produtos))
+                        .map(compra -> getResumoCompras(null ,cliente, compra, produtos))
                         .reduce(ComprasService::getResumoQtdTotalCompras)
                         .get())
                 .sorted(Comparator.comparing(ResumoComprasClientResponseDto::getValorTotalCompras))
@@ -43,7 +44,7 @@ public class ComprasService {
 
         return clientes.stream()
                 .map(cliente -> cliente.getCompras().stream()
-                        .map(compra -> getResumoComprasByAno(anoCompra, cliente, compra, produtos))
+                        .map(compra -> getResumoCompras(anoCompra, cliente, compra, produtos))
                         .reduce(ComprasService::getResumoQtdTotalCompras)
                         .get())
                 .sorted(Comparator.comparing(ResumoComprasClientResponseDto::getValorTotalCompras).reversed())
@@ -61,11 +62,34 @@ public class ComprasService {
 
         return clientes.stream()
                 .map(cliente -> cliente.getCompras().stream()
-                        .map(compra -> getResumoCompras(cliente, compra, produtos))
+                        .map(compra -> getResumoCompras(null ,cliente, compra, produtos))
                         .reduce(ComprasService::getResumoQtdTotalCompras)
                         .get())
                 .sorted(Comparator.comparing(ResumoComprasClientResponseDto::getQtdTotalCompras).reversed())
                 .limit(3)
+                .toList();
+    }
+
+    public List<RecomendacaoProdutoResponseDto> recomendacaoProdutos() {
+        List<ClienteResponseDto> clientes = clienteClient.getClientes();
+        List<ProdutoResponseDto> produtos = produtoClient.getProdutos();
+
+        validarClientesProdutos(clientes, produtos);
+
+        return clientes.stream()
+                .map(cliente -> cliente.getCompras().stream()
+                        .max(Comparator.comparing(ClienteCompraResponseDto::getQuantidade))
+                        .map(compra -> {
+                            RecomendacaoProdutoResponseDto recomendacao = new RecomendacaoProdutoResponseDto();
+                            recomendacao.setNomeCliente(cliente.getNome());
+                            recomendacao.setCpfCliente(cliente.getCpf());
+                            recomendacao.setTipoVinho(produtos.stream()
+                                    .filter(produto -> produto.getCodigo().equals(compra.getCodigo()))
+                                    .findFirst()
+                                    .map(ProdutoResponseDto::getTipoVinho)
+                                    .orElse(null));
+                            return recomendacao;
+                        }).get())
                 .toList();
     }
 
@@ -82,7 +106,8 @@ public class ComprasService {
         return resumo1;
     }
 
-    private static ResumoComprasClientResponseDto getResumoCompras(ClienteResponseDto cliente,
+    private static ResumoComprasClientResponseDto getResumoCompras(Integer anoCompra,
+                                                                   ClienteResponseDto cliente,
                                                                    ClienteCompraResponseDto compra,
                                                                    List<ProdutoResponseDto> produtos) {
 
@@ -92,27 +117,7 @@ public class ComprasService {
         resumo.setQtdTotalCompras(compra.getQuantidade());
 
         resumo.setValorTotalCompras(produtos.stream()
-                .filter(produto -> produto.getCodigo().equals(compra.getCodigo()))
-                .findFirst()
-                .map(produto -> produto.getPreco().multiply(BigDecimal.valueOf(compra.getQuantidade()))
-                                .setScale(2, RoundingMode.HALF_UP)
-                )
-                .orElse(BigDecimal.ZERO));
-
-        return resumo;
-    }
-
-    private static ResumoComprasClientResponseDto getResumoComprasByAno(Integer anoCompra,
-                                                                        ClienteResponseDto cliente,
-                                                                        ClienteCompraResponseDto compra,
-                                                                        List<ProdutoResponseDto> produtos) {
-        ResumoComprasClientResponseDto resumo = new ResumoComprasClientResponseDto();
-        resumo.setNomeCliente(cliente.getNome());
-        resumo.setCpfCliente(cliente.getCpf());
-        resumo.setQtdTotalCompras(compra.getQuantidade());
-
-        resumo.setValorTotalCompras(produtos.stream()
-                .filter(produto -> produto.getAnoCompra().equals(anoCompra))
+                .filter(produto -> Objects.nonNull(anoCompra) && produto.getAnoCompra().equals(anoCompra))
                 .filter(produto -> produto.getCodigo().equals(compra.getCodigo()))
                 .findFirst()
                 .map(produto -> produto.getPreco().multiply(BigDecimal.valueOf(compra.getQuantidade()))

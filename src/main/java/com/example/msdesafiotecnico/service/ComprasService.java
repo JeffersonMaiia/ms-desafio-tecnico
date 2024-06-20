@@ -2,10 +2,7 @@ package com.example.msdesafiotecnico.service;
 
 import com.example.msdesafiotecnico.client.ClienteClient;
 import com.example.msdesafiotecnico.client.ProdutoClient;
-import com.example.msdesafiotecnico.dto.ClienteCompraResponseDto;
-import com.example.msdesafiotecnico.dto.ClienteResponseDto;
-import com.example.msdesafiotecnico.dto.ProdutoResponseDto;
-import com.example.msdesafiotecnico.dto.ResumoComprasClientResponseDto;
+import com.example.msdesafiotecnico.dto.*;
 import com.example.msdesafiotecnico.exception.NoContentException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,9 +24,7 @@ public class ComprasService {
         List<ClienteResponseDto> clientes = clienteClient.getClientes();
         List<ProdutoResponseDto> produtos = produtoClient.getProdutos();
 
-        if(CollectionUtils.isEmpty(clientes) || CollectionUtils.isEmpty(produtos)) {
-            throw new NoContentException("Não foi possível encontrar clientes e produtos.");
-        }
+        validarClientesProdutos(clientes, produtos);
 
         return clientes.stream()
                 .map(cliente -> cliente.getCompras().stream()
@@ -44,9 +39,7 @@ public class ComprasService {
         List<ClienteResponseDto> clientes = clienteClient.getClientes();
         List<ProdutoResponseDto> produtos = produtoClient.getProdutos();
 
-        if(CollectionUtils.isEmpty(clientes) || CollectionUtils.isEmpty(produtos)) {
-            throw new NoContentException("Não foi possível encontrar clientes e produtos.");
-        }
+        validarClientesProdutos(clientes, produtos);
 
         return clientes.stream()
                 .map(cliente -> cliente.getCompras().stream()
@@ -60,7 +53,30 @@ public class ComprasService {
                         .formatted(anoCompra)));
     }
 
-    private static ResumoComprasClientResponseDto getResumoQtdTotalCompras(ResumoComprasClientResponseDto resumo1, ResumoComprasClientResponseDto resumo2) {
+    public List<ResumoComprasClientResponseDto> findClientesFieis() {
+        List<ClienteResponseDto> clientes = clienteClient.getClientes();
+        List<ProdutoResponseDto> produtos = produtoClient.getProdutos();
+
+        validarClientesProdutos(clientes, produtos);
+
+        return clientes.stream()
+                .map(cliente -> cliente.getCompras().stream()
+                        .map(compra -> getResumoCompras(cliente, compra, produtos))
+                        .reduce(ComprasService::getResumoQtdTotalCompras)
+                        .get())
+                .sorted(Comparator.comparing(ResumoComprasClientResponseDto::getQtdTotalCompras).reversed())
+                .limit(3)
+                .toList();
+    }
+
+    private static void validarClientesProdutos(List<ClienteResponseDto> clientes, List<ProdutoResponseDto> produtos) {
+        if(CollectionUtils.isEmpty(clientes) || CollectionUtils.isEmpty(produtos)) {
+            throw new NoContentException("Não foi possível encontrar clientes e produtos.");
+        }
+    }
+
+    private static ResumoComprasClientResponseDto getResumoQtdTotalCompras(ResumoComprasClientResponseDto resumo1,
+                                                                           ResumoComprasClientResponseDto resumo2) {
         resumo1.setQtdTotalCompras(resumo1.getQtdTotalCompras() + resumo2.getQtdTotalCompras());
         resumo1.setValorTotalCompras(resumo1.getValorTotalCompras().add(resumo2.getValorTotalCompras()));
         return resumo1;

@@ -28,4 +28,9 @@ public class ComprasController {
         return ResponseEntity.ok(comprasService.findMaiorCompra(anoCompra));
     }
 
+    @GetMapping("/clientes_fieis")
+    public ResponseEntity<List<ResumoComprasClientResponseDto>> findClientesFieis() {
+        return ResponseEntity.ok(comprasService.findClientesFieis());
+    }
+
 }

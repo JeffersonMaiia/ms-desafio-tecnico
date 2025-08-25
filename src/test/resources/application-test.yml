@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: ms-desafio-tecnico
+
+  # Cache desabilitado para testes para evitar problemas de serialização
+  cache:
+    type: none
+
+  # Redis configuração para testes (opcional)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+external-ms:
+  url: "https://rgr3viiqdl8sikgv.public.blob.vercel-storage.com"
+
+# Logging para debug
+logging:
+  level:
+    com.example.msdesafiotecnico: DEBUG
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis: DEBUG

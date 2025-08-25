@@ -23,10 +23,21 @@ Para executar o projeto é necessário ter o Maven. Após isso, basta executar o
 mvn clean install
 ```
 
+```bash
+docker compose up -d
+```
+
 ## Documentação
 A documentação da API pode ser acessada através do link abaixo:
 * [Swagger - http://localhost:8080](http://localhost:8080/swagger-ui.html)
 ![Screenshot](screenshots/swagger.png)<br>
 
-## Testes Unitários
-![Screenshot](screenshots/testes_unitarios.png)<br>
+
+### **Padrões de Design Aplicados:**
+- 🏗️ **Repository Pattern** (via Feign Client)
+- 🔄 **Decorator Pattern** (Cache annotations)
+- 🎯 **Strategy Pattern** (Algoritmos de agregação)
+
+### **Sugestão de Evolução Futuras:**
+- 📊 **Métricas e Monitoring:** Integrar com Prometheus e Grafana para
+  ![Screenshot](screenshots/melhoria.png)<br>
